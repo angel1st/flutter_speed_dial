@@ -18,6 +18,8 @@ class AnimatedChild extends AnimatedWidget {
   final ShapeBorder shape;
   final String heroTag;
 
+  final double buttonSize;
+
   AnimatedChild({
     Key key,
     Animation<double> animation,
@@ -35,12 +37,13 @@ class AnimatedChild extends AnimatedWidget {
     this.toggleChildren,
     this.shape,
     this.heroTag,
+    this.buttonSize,
   }) : super(key: key, listenable: animation);
 
   Widget buildLabel() {
     final Animation<double> animation = listenable;
 
-    if (!((label != null || labelWidget != null) && visible && animation.value == 62.0)) {
+    if (!((label != null || labelWidget != null) && visible && animation.value == buttonSize)) {
       return Container();
     }
 
@@ -75,7 +78,7 @@ class AnimatedChild extends AnimatedWidget {
   Widget build(BuildContext context) {
     final Animation<double> animation = listenable;
 
-    final Widget buttonChild = animation.value > 50.0
+    final Widget buttonChild = animation.value > 40.0
         ? Container(
             width: animation.value,
             height: animation.value,
@@ -92,11 +95,11 @@ class AnimatedChild extends AnimatedWidget {
         children: <Widget>[
           buildLabel(),
           Container(
-            width: 62.0,
+            width: buttonSize,
             height: animation.value,
-            padding: EdgeInsets.only(bottom: 62.0 - animation.value),
+            padding: EdgeInsets.only(bottom: buttonSize - animation.value),
             child: Container(
-              height: 62.0,
+              height: buttonSize,
               width: animation.value,
               padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: FloatingActionButton(

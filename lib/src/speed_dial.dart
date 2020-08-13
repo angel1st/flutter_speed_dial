@@ -5,6 +5,8 @@ import 'animated_floating_button.dart';
 import 'background_overlay.dart';
 import 'speed_dial_child.dart';
 
+enum SpeedDialOrientation { vertical, horizontal }
+
 /// Builds the Speed Dial
 class SpeedDial extends StatefulWidget {
   /// Children buttons, from the lowest to the highest.
@@ -56,6 +58,12 @@ class SpeedDial extends StatefulWidget {
   /// The speed of the animation
   final int animationSpeed;
 
+  /// Orientation mode
+  final SpeedDialOrientation orientation;
+
+  /// Speed dial child button size
+  final double childButtonSize;
+
   SpeedDial({
     this.children = const [],
     this.visible = true,
@@ -77,14 +85,17 @@ class SpeedDial extends StatefulWidget {
     this.shape = const CircleBorder(),
     this.curve = Curves.linear,
     this.onPress,
-    this.animationSpeed = 150
+    this.animationSpeed = 150,
+    this.orientation = SpeedDialOrientation.vertical,
+    this.childButtonSize = 62.0,
   });
 
   @override
   _SpeedDialState createState() => _SpeedDialState();
 }
 
-class _SpeedDialState extends State<SpeedDial> with SingleTickerProviderStateMixin {
+class _SpeedDialState extends State<SpeedDial>
+    with SingleTickerProviderStateMixin {
   AnimationController _controller;
 
   bool _open = false;
@@ -98,8 +109,9 @@ class _SpeedDialState extends State<SpeedDial> with SingleTickerProviderStateMix
     );
   }
 
-  Duration _calculateMainControllerDuration() =>
-      Duration(milliseconds: widget.animationSpeed + widget.children.length * (widget.animationSpeed / 5).round());
+  Duration _calculateMainControllerDuration() => Duration(
+      milliseconds: widget.animationSpeed +
+          widget.children.length * (widget.animationSpeed / 5).round());
 
   @override
   void dispose() {
@@ -142,7 +154,10 @@ class _SpeedDialState extends State<SpeedDial> with SingleTickerProviderStateMix
         .map((SpeedDialChild child) {
           int index = widget.children.indexOf(child);
 
-          var childAnimation = Tween(begin: 0.0, end: 62.0).animate(
+          var childAnimation = Tween(
+            begin: 0.0,
+            end: widget.childButtonSize,
+          ).animate(
             CurvedAnimation(
               parent: this._controller,
               curve: Interval(0, singleChildrenTween * (index + 1)),
@@ -157,16 +172,23 @@ class _SpeedDialState extends State<SpeedDial> with SingleTickerProviderStateMix
             foregroundColor: child.foregroundColor,
             elevation: child.elevation,
             child: child.child,
-            label: child.label,
+            label: widget.orientation == SpeedDialOrientation.vertical
+                ? child.label
+                : null,
             labelStyle: child.labelStyle,
             labelBackgroundColor: child.labelBackgroundColor,
-            labelWidget: child.labelWidget,
+            labelWidget: widget.orientation == SpeedDialOrientation.vertical
+                ? child.labelWidget
+                : null,
             onTap: child.onTap,
             toggleChildren: () {
               if (!widget.closeManually) _toggleChildren();
             },
             shape: child.shape,
-            heroTag: widget.heroTag != null ? '${widget.heroTag}-child-$index' : null,
+            heroTag: widget.heroTag != null
+                ? '${widget.heroTag}-child-$index'
+                : null,
+            buttonSize: widget.childButtonSize,
           );
         })
         .toList()
@@ -210,28 +232,37 @@ class _SpeedDialState extends State<SpeedDial> with SingleTickerProviderStateMix
       foregroundColor: widget.foregroundColor,
       elevation: widget.elevation,
       onLongPress: _toggleChildren,
-      callback: (_open || widget.onPress == null) ? _toggleChildren : widget.onPress,
+      callback:
+          (_open || widget.onPress == null) ? _toggleChildren : widget.onPress,
       child: child,
       heroTag: widget.heroTag,
       shape: widget.shape,
       curve: widget.curve,
     );
 
+    final List<Widget> speedDial = List.from(fabChildren)
+      ..add(
+        Container(
+          margin: EdgeInsets.only(top: 8.0, right: 2.0),
+          child: animatedFloatingButton,
+        ),
+      );
+
     return Positioned(
       bottom: widget.marginBottom - 16,
-      right: widget.marginRight - 16,
+      right: widget.marginRight - 8,
       child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: List.from(fabChildren)
-            ..add(
-              Container(
-                margin: EdgeInsets.only(top: 8.0, right: 2.0),
-                child: animatedFloatingButton,
+        child: widget.orientation == SpeedDialOrientation.vertical
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: speedDial,
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: speedDial,
               ),
-            ),
-        ),
       ),
     );
   }
