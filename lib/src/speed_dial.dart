@@ -172,14 +172,10 @@ class _SpeedDialState extends State<SpeedDial>
             foregroundColor: child.foregroundColor,
             elevation: child.elevation,
             child: child.child,
-            label: widget.orientation == SpeedDialOrientation.vertical
-                ? child.label
-                : null,
+            label: child.label,
             labelStyle: child.labelStyle,
             labelBackgroundColor: child.labelBackgroundColor,
-            labelWidget: widget.orientation == SpeedDialOrientation.vertical
-                ? child.labelWidget
-                : null,
+            labelWidget: child.labelWidget,
             onTap: child.onTap,
             toggleChildren: () {
               if (!widget.closeManually) _toggleChildren();

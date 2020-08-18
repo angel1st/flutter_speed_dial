@@ -43,7 +43,9 @@ class AnimatedChild extends AnimatedWidget {
   Widget buildLabel() {
     final Animation<double> animation = listenable;
 
-    if (!((label != null || labelWidget != null) && visible && animation.value == buttonSize)) {
+    if (!((label != null || labelWidget != null) &&
+        visible &&
+        animation.value == buttonSize)) {
       return Container();
     }
 
@@ -75,7 +77,7 @@ class AnimatedChild extends AnimatedWidget {
     toggleChildren();
   }
 
-  Widget build(BuildContext context) {
+  List<Widget> _buildChildren() {
     final Animation<double> animation = listenable;
 
     final Widget buttonChild = animation.value > 40.0
@@ -88,32 +90,40 @@ class AnimatedChild extends AnimatedWidget {
             width: 0.0,
             height: 0.0,
           );
-
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          buildLabel(),
-          Container(
-            width: buttonSize,
-            height: animation.value,
-            padding: EdgeInsets.only(bottom: buttonSize - animation.value),
-            child: Container(
-              height: buttonSize,
-              width: animation.value,
-              padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: FloatingActionButton(
-                heroTag: heroTag,
-                onPressed: _performAction,
-                backgroundColor: backgroundColor,
-                foregroundColor: foregroundColor,
-                elevation: elevation ?? 6.0,
-                child: buttonChild,
-              ),
-            ),
-          )
-        ],
+    return [
+      buildLabel(),
+      Container(
+        width: buttonSize,
+        height: animation.value,
+        padding: EdgeInsets.only(bottom: buttonSize - animation.value),
+        child: Container(
+          height: buttonSize,
+          width: animation.value,
+          padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+          child: FloatingActionButton(
+            heroTag: heroTag,
+            onPressed: _performAction,
+            backgroundColor: backgroundColor,
+            foregroundColor: foregroundColor,
+            elevation: elevation ?? 6.0,
+            child: buttonChild,
+          ),
+        ),
       ),
+    ];
+  }
+
+  Widget build(BuildContext context) {
+    return Container(
+      child: MediaQuery.of(context).orientation == Orientation.portrait
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: _buildChildren(),
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: _buildChildren(),
+            ),
     );
   }
 }

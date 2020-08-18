@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 void main() {
@@ -41,7 +40,8 @@ class MyAppState extends State<MyApp> with TickerProviderStateMixin {
     );
   }
 
-  SpeedDial buildSpeedDial() {
+  SpeedDial buildSpeedDial(BuildContext context) {
+    final Orientation orientation = MediaQuery.of(context).orientation;
     return SpeedDial(
       animatedIcon: AnimatedIcons.menu_close,
       animatedIconTheme: IconThemeData(size: 22.0),
@@ -51,6 +51,54 @@ class MyAppState extends State<MyApp> with TickerProviderStateMixin {
       visible: dialVisible,
       curve: Curves.bounceIn,
       children: [
+        SpeedDialChild(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              'assets/images/plant_activities/camera.png',
+            ),
+          ), //Icon(Icons.accessibility, color: Colors.white),
+          backgroundColor: Colors.deepOrange,
+          onTap: () => print('FIRST CHILD'),
+          label: 'First Child',
+          labelStyle: TextStyle(fontWeight: FontWeight.w500),
+          labelBackgroundColor: Colors.deepOrangeAccent,
+        ),
+        SpeedDialChild(
+          child: Icon(Icons.brush, color: Colors.white),
+          backgroundColor: Colors.green,
+          onTap: () => print('SECOND CHILD'),
+          label: 'Second Child',
+          labelStyle: TextStyle(fontWeight: FontWeight.w500),
+          labelBackgroundColor: Colors.green,
+        ),
+        SpeedDialChild(
+          child: Icon(Icons.keyboard_voice, color: Colors.white),
+          backgroundColor: Colors.blue,
+          onTap: () => print('THIRD CHILD'),
+          labelWidget: MediaQuery.of(context).orientation == Orientation.portrait ? Container(
+            color: Colors.blue,
+            margin: EdgeInsets.only(right: 10),
+            padding: EdgeInsets.all(6),
+            child: Text('Custom Label Widget'),
+          ) : RotatedBox(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                border: Border.all(
+                  color: Colors.blue,
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(6),
+                ),
+              ),
+              margin: EdgeInsets.only(right: 10),
+              padding: EdgeInsets.all(6),
+              child: Text('Custom Label Widget'),
+            ),
+            quarterTurns: -1,
+          ),
+        ),
         SpeedDialChild(
           child: Icon(Icons.accessibility, color: Colors.white),
           backgroundColor: Colors.deepOrange,
@@ -78,6 +126,44 @@ class MyAppState extends State<MyApp> with TickerProviderStateMixin {
             child: Text('Custom Label Widget'),
           ),
         ),
+        SpeedDialChild(
+          child: Icon(Icons.accessibility, color: Colors.white),
+          backgroundColor: Colors.deepOrange,
+          onTap: () => print('FIRST CHILD'),
+          label: 'First Child',
+          labelStyle: TextStyle(fontWeight: FontWeight.w500),
+          labelBackgroundColor: Colors.deepOrangeAccent,
+        ),
+        SpeedDialChild(
+          child: Icon(Icons.brush, color: Colors.white),
+          backgroundColor: Colors.green,
+          onTap: () => print('SECOND CHILD'),
+          label: 'Second Child',
+          labelStyle: TextStyle(fontWeight: FontWeight.w500),
+          labelBackgroundColor: Colors.green,
+        ),
+        SpeedDialChild(
+          child: Icon(Icons.keyboard_voice, color: Colors.white),
+          backgroundColor: Colors.blue,
+          onTap: () => print('THIRD CHILD'),
+          labelWidget: Container(
+            color: Colors.blue,
+            margin: EdgeInsets.only(right: 10),
+            padding: EdgeInsets.all(6),
+            child: Text('Custom Label Widget'),
+          ),
+        ),
+        SpeedDialChild(
+          child: Icon(Icons.keyboard_voice, color: Colors.white),
+          backgroundColor: Colors.blue,
+          onTap: () => print('THIRD CHILD'),
+          labelWidget: Container(
+            color: Colors.blue,
+            margin: EdgeInsets.only(right: 10),
+            padding: EdgeInsets.all(6),
+            child: Text('Custom Label Widget'),
+          ),
+        ),
       ],
     );
   }
@@ -87,7 +173,7 @@ class MyAppState extends State<MyApp> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(title: Text('Flutter Speed Dial')),
       body: buildBody(),
-      floatingActionButton: buildSpeedDial(),
+      floatingActionButton: buildSpeedDial(context),
     );
   }
 }
